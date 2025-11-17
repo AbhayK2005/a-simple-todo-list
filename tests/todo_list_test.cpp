@@ -7,10 +7,42 @@
 
 TEST_CASE("Can add tasks") {
     TodoList list;
-    list.add("Buy milk");
+    REQUIRE(list.add("Buy milk") == true);
     REQUIRE(list.all().size() == 1);
-    list.add("Buy eggs");
+    REQUIRE(list.add("Buy eggs") == true);
     REQUIRE(list.all().size() == 2);
+}
+
+TEST_CASE("Rejects empty task descriptions") {
+    TodoList list;
+    REQUIRE(list.add("") == false);
+    REQUIRE(list.all().size() == 0);
+}
+
+TEST_CASE("Rejects whitespace-only descriptions") {
+    TodoList list;
+    REQUIRE(list.add("   ") == false);
+    REQUIRE(list.add("\t\t") == false);
+    REQUIRE(list.all().size() == 0);
+}
+
+TEST_CASE("Complete returns false for nonexistent task") {
+    TodoList list;
+    list.add("Buy milk");
+    REQUIRE(list.complete("Buy cheese") == false);
+}
+
+TEST_CASE("Complete returns false for empty string") {
+    TodoList list;
+    list.add("Buy milk");
+    REQUIRE(list.complete("") == false);
+}
+
+TEST_CASE("Cannot complete already completed task") {
+    TodoList list;
+    list.add("Buy milk");
+    REQUIRE(list.complete("Buy milk") == true);
+    REQUIRE(list.complete("Buy milk") == false);
 }
 
 TEST_CASE("Can mark tasks as complete") {
